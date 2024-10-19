@@ -1,16 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient, SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey",
-  "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE",
-};
-
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const URL = Deno.env.get("SUPABASE_URL") ?? "";
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+const EMAIL_FROM = "Company <catalystars@catalystars.com>";
 
 interface UserCreationType {
   email: string;
@@ -88,7 +84,7 @@ async function sendEmails(data: UserCreationResponse[]): EmailResponse[] {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Company <catalystars@catalystars.com>",
+        from: EMAIL_FROM,
         to: data.email,
         subject: "You are invited to join our platform",
         html: `
